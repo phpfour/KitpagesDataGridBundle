@@ -1,29 +1,38 @@
 <?php
+
 namespace Kitpages\DataGridBundle\Model;
 
 class Field
 {
     /** @var string */
     protected $fieldName = null;
+
     /** @var string */
     protected $label = null;
+
     /** @var boolean */
     protected $sortable = false;
+
     /** @var boolean */
     protected $filterable = false;
+
     /** @var boolean */
     protected $visible = true;
+
     /** @var function */
     protected $formatValueCallback = null;
+
     /** @var boolean */
     protected $autoEscape = true;
+
     /** @var boolean */
     protected $translatable = false;
 
     public function __construct($fieldName, $optionList = array())
     {
         $this->fieldName = $fieldName;
-        $this->label = $fieldName;
+        $this->label     = $fieldName;
+
         foreach ($optionList as $key => $val) {
             if (in_array($key, array(
                 "label",
@@ -33,7 +42,8 @@ class Field
                 "formatValueCallback",
                 "autoEscape",
                 "translatable"
-            ) )) {
+            ))
+            ) {
                 $this->$key = $val;
             } else {
                 throw new \InvalidArgumentException("key $key doesn't exist in option list");

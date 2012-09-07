@@ -1,4 +1,5 @@
 <?php
+
 namespace Kitpages\DataGridBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;

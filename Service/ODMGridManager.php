@@ -218,7 +218,7 @@ class ODMGridManager
 
         $totalCount = $query->execute()->count();
         $paginator->setTotalItemCount($totalCount);
-        
+
         // calculate total page count
         if ($paginator->getTotalItemCount() == 0) {
             $paginator->setTotalPageCount(0);

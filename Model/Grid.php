@@ -10,48 +10,51 @@ class Grid
 {
     /** @var Paginator */
     protected $paginator = null;
+
     /** @var GridConfig */
     protected $gridConfig = null;
+
     /** @var array */
     protected $itemList = array();
+
     /** @var UrlTool */
     protected $urlTool = null;
+
     /** @var string */
     protected $requestUri = null;
+
     /** @var string */
     protected $filterValue = null;
+
     /** @var string */
     protected $sortField = null;
+
     /** @var string */
     protected $sortOrder = null;
+
     /** @var array ($gridQueryBuilder->getRootAliases()) */
     protected $rootAliases = array();
 
     public function getSortUrl($fieldName)
     {
-        $uri =  $this->urlTool->changeRequestQueryString(
-            $this->requestUri,
-            $this->getSortFieldFormName(),
-            $fieldName
-        );
+        $uri = $this->urlTool->changeRequestQueryString($this->requestUri, $this->getSortFieldFormName(), $fieldName);
+
         if ($fieldName == $this->getSortField()) {
             $order = ($this->getSortOrder() == "ASC") ? "DESC" : "ASC";
         } else {
             $order = "ASC";
         }
 
-        return $this->urlTool->changeRequestQueryString(
-            $uri,
-            $this->getSortOrderFormName(),
-            $order
-        );
+        return $this->urlTool->changeRequestQueryString($uri, $this->getSortOrderFormName(), $order);
     }
+
     public function getSortCssClass($fieldName)
     {
         $css = "";
+
         if ($fieldName == $this->getSortField()) {
             $css .= " kit-grid-sort ";
-            $css .= " kit-grid-sort-".strtolower($this->getSortOrder())." ";
+            $css .= " kit-grid-sort-" . strtolower($this->getSortOrder()) . " ";
         }
 
         return $css;
@@ -62,7 +65,7 @@ class Grid
         // parse field name and get value after the dot
         $fieldNameTab = explode('.', $field->getFieldName());
 
-        if ( in_array($fieldNameTab[0], $this->rootAliases) ) {
+        if (in_array($fieldNameTab[0], $this->rootAliases)) {
             array_shift($fieldNameTab);
         }
 
@@ -70,30 +73,37 @@ class Grid
         while (count($fieldNameTab) > 0) {
             $fieldName = array_shift($fieldNameTab);
             // get parameter in the $row
-            $value = $row[$fieldName];
+            $value = (isset($row[$fieldName])) ? $row[$fieldName] : null;
         }
-
-//        $fieldName = array_shift($fieldNameTab);
-//        $value = $row[$fieldNameTab];
 
         // real treatment
-        if ( is_callable( $field->getFormatValueCallback() ) ) {
-            $callback = $field->getFormatValueCallback();
+        if (is_callable($field->getFormatValueCallback())) {
+
+            $callback   = $field->getFormatValueCallback();
             $reflection = new \ReflectionFunction($callback);
+
             if ($reflection->getNumberOfParameters() == 1) {
-                $returnValue =  $callback($value);
+                $returnValue = call_user_func_array($callback, array($value));
             } elseif ($reflection->getNumberOfParameters() == 2) {
-                $returnValue =  $callback($value, $row);
+                $returnValue = call_user_func_array($callback, array($value, $row));
             } else {
-                throw new DataGridException("Wrong number of parameters in the callback for field ".$field->getFieldName());
+                throw new DataGridException("Wrong number of parameters in the callback for field " . $field->getFieldName());
             }
+
         } elseif (is_scalar($value)) {
+
             $returnValue = $value;
+
         } elseif ($value instanceof \DateTime) {
+
             $returnValue = $value->format("Y-m-d H:i:s");
+
         } else {
+
             $returnValue = $value;
+
         }
+
         // auto escape ?
         if ($field->getAutoEscape()) {
             $returnValue = htmlspecialchars($returnValue);
@@ -104,15 +114,17 @@ class Grid
 
     public function getFilterFormName()
     {
-        return "kitdg_grid_".$this->getGridConfig()->getName()."_filter";
+        return "kitdg_grid_" . $this->getGridConfig()->getName() . "_filter";
     }
+
     public function getSortFieldFormName()
     {
-        return "kitdg_grid_".$this->getGridConfig()->getName()."_sort_field";
+        return "kitdg_grid_" . $this->getGridConfig()->getName() . "_sort_field";
     }
+
     public function getSortOrderFormName()
     {
-        return "kitdg_grid_".$this->getGridConfig()->getName()."_sort_order";
+        return "kitdg_grid_" . $this->getGridConfig()->getName() . "_sort_order";
     }
 
     /**

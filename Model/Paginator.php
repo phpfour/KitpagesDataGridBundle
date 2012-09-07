@@ -13,17 +13,21 @@ class Paginator
     protected $previousButtonPage = null;
     protected $totalItemCount = 0;
     protected $currentPage = 1;
+
     /** @var UrlTool */
     protected $urlTool = null;
+
     /** @var PaginatorConfig */
     protected $paginatorConfig = null;
+
     /** @var string */
     protected $requestUri = null;
 
     public function getPageRange()
     {
         $tab = array();
-        for ($i = $this->minPage ; $i <= $this->maxPage ; $i++) {
+
+        for ($i = $this->minPage; $i <= $this->maxPage; $i++) {
             $tab[] = $i;
         }
 
@@ -32,11 +36,7 @@ class Paginator
 
     public function getUrl($key, $val)
     {
-        return $this->urlTool->changeRequestQueryString(
-            $this->requestUri,
-            $this->paginatorConfig->getRequestQueryName($key),
-            $val
-        );
+        return $this->urlTool->changeRequestQueryString($this->requestUri, $this->paginatorConfig->getRequestQueryName($key), $val);
     }
 
     public function setMaxPage($maxPage)
@@ -156,5 +156,4 @@ class Paginator
     {
         return $this->requestUri;
     }
-
 }
